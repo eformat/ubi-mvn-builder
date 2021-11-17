@@ -1,0 +1,11 @@
+FROM quay.io/eformat/ubi-mvn-builder-middle-jvm:latest
+
+ENV DEPLOY=/deployment
+
+# copy artifacts
+COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/lib/ ${DEPLOY}/lib/
+COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/*.jar ${DEPLOY}/
+COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/app/ ${DEPLOY}/app/
+COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/quarkus ${DEPLOY}/quarkus/
+
+EXPOSE 8080 8443

@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# This POC script is based on the openshift/source-to-image project documentation,
+# and loosely inspired by fabric8io-images/s2i's assemble script, but **MUCH** simplified;
+# a TODO future PRODUCTION version of this would probably want to re-use that script...
+
+set -ex
+
+#############################################
+# Configure maven - for a complete list of
+# supported values, please refer the module.yaml
+# file.
+CONFIGURE_SCRIPTS=(
+  ${APP_HOME}/.m2/configure-maven.sh
+)
+source ${APP_HOME}/.m2/configure.sh
+#############################################
+
+SRC_DIR=${SRC_DIR:-'/tmp/src/'}
+
+cd $SRC_DIR
+
+if [ -z "$ARTIFACT_DIR" ]; then
+  BUILD_DIR=target
+else
+  BUILD_DIR=$ARTIFACT_DIR
+fi
+
+if [ -z "$MAVEN_BUILD_OPTS" ]; then
+  MAVEN_BUILD_OPTS="-Pnative -e -B \
+    -DskipTests -Dmaven.javadoc.skip=true -Dmaven.site.skip=true -Dmaven.source.skip=true \
+    -Djacoco.skip=true -Dcheckstyle.skip=true -Dfindbugs.skip=true -Dpmd.skip=true \
+    -Dfabric8.skip=true"
+fi
+
+mvn package ${MAVEN_BUILD_OPTS} ${MVN_ADDITIONAL_ARGS}
+
+if ls ${BUILD_DIR}/*-runner; then
+  cp -v ${BUILD_DIR}/*-runner ${APP_HOME}/application
+  chmod +x ${APP_HOME}
+  chmod +x ${APP_HOME}/application
+elif [ -d "${BUILD_DIR}/quarkus-app" ]; then
+  cp -vRa ${BUILD_DIR}/quarkus-app/lib/ ${APP_HOME}/lib/
+  cp -vRa ${BUILD_DIR}/quarkus-app/*.jar ${APP_HOME}/
+  cp -vRa ${BUILD_DIR}/quarkus-app/app/ ${APP_HOME}/app/
+  cp -vRa ${BUILD_DIR}/quarkus-app/quarkus/ ${APP_HOME}/quarkus/
+fi
+
+if [ ! -z "${MAVEN_CLEAR_REPO}" ]; then
+  rm -rf ${APP_HOME}/.m2/repository
+fi

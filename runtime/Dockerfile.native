@@ -1,0 +1,9 @@
+FROM quay.io/eformat/ubi-mvn-builder-middle-native:latest
+
+ENV DEPLOY=/deployment
+
+# copy artifacts
+COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/code-build:latest /home/developer/application ${DEPLOY}/application
+RUN chmod 550 ${DEPLOY}/application
+
+EXPOSE 8080 8443
