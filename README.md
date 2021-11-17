@@ -99,6 +99,16 @@ Build JVM and Native Quarkus based application images from UBI using multi-stage
       --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
     ```
 
+6. Test.
+
+    ```bash
+    curl -w'\n' https://$(oc get route jvm --template='{{ .spec.host }}')/hello
+    Hello RESTEasy Reactive
+
+    curl -w'\n' https://$(oc get route native --template='{{ .spec.host }}')/hello
+    Hello RESTEasy Reactive
+    ```
+
 ### Triggers and Web Hooks
 
 Set triggers for the application builds based on the intermediary build images:
