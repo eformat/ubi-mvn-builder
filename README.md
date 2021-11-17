@@ -179,12 +179,12 @@ oc new-build --name=native \
   --strategy docker --dockerfile - < ./application/Dockerfile.native
 oc set triggers bc/jvm --from-image=$(oc project -q)/jvm-build:latest
 oc set triggers bc/native --from-image=$(oc project -q)/native-build:latest
-oc new-app jvm --allow-missing-images=true
+oc new-app jvm --allow-missing-imagestream-tags=true
 oc expose deployment/jvm --generator=service/v2 --port=8080,8443
 oc expose svc/jvm --port=8080
 oc patch route/jvm \
   --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
-oc new-app native --allow-missing-images=true
+oc new-app native --allow-missing-imagestream-tags=true
 oc expose deployment/native --generator=service/v2 --port=8080,8443
 oc expose svc/native --port=8080
 oc patch route/native \
