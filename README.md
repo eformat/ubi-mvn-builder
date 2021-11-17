@@ -1,5 +1,7 @@
 ## ubi-mvn-builder
 
+Build JVM and Native Quarkus based application images from UBI using multi-stage docker files and latest Java toolchain.
+
 ![images/ubi-mvn-builder.png](images/ubi-mvn-builder.png)
 
 > 👷👷👷 Build Toolchain:
@@ -97,27 +99,45 @@
       --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
     ```
 
-### Create triggers
+### Triggers and Web Hooks
 
-
+Tag a new builder image manually:
 ```bash
-oc tag --source=docker quay.io/eformat/ubi-mvn-builder:latest code-jvm/ubi-mvn-builder:latest --reference-policy=local --insecure=true
+oc tag --source=docker quay.io/eformat/ubi-mvn-builder:latest $(oc project -q)/ubi-mvn-builder:latest --reference-policy=local --insecure=true
 ```
 
-BuildConfig source trigger.
+Add the `--scheduled=true` argument to periodically check imported image from the remote repository.
+
+This will Trigger new builds for s2i `jvm-build` and `native-build`.
+
+Tag a new runtime image manually:
+```bash
+oc tag --source=docker quay.io/eformat/ubi-mvn-runtime-jvm:latest $(oc project -q)/ubi-mvn-runtime-jvm:latest --reference-policy=local --insecure=true
+oc tag --source=docker quay.io/eformat/ubi-mvn-runtime-native:latest $(oc project -q)/ubi-mvn-runtime-native:latest --reference-policy=local --insecure=true
+```
+
+Add the `--scheduled=true` argument to periodically check imported image from the remote repository.
+
+This will Trigger new builds for application `jvm` and `native`.
+
+Configure a Build trigger in GitHub to start a build when the source code changes. Handy one-liner to get the hook:
+```bash
+APP_NAME=jvm
+echo $(oc describe bc ${APP_NAME} | grep -E 'webhook.*github' | awk '{print $2}' | sed s/\<secret\>/$(oc get bc ${APP_NAME} -o jsonpath='{.spec.triggers..github.secret}')/)
+```
 
 ### Options to Maven Build
 
 ```bash
-| Env Variable             | Example              | Description                                         |
-|--------------------------|----------------------|-----------------------------------------------------|
-| HTTPS_PROXY              |                      |                                                     |
-| HTTP_PROXY_HOST          |                      |                                                     |
-| HTTP_PROXY_PORT          |                      |                                                     |
-| HTTP_PROXY_PASSWORD      |                      |                                                     |
-| HTTP_PROXY_USERNAME      |                      |                                                     |
-| HTTP_PROXY_NONPROXYHOSTS |                      |                                                     |
-| MAVEN_MIRROR_URL         |                      |                                                     |
-| MAVEN_BUILD_OPTS         |                      |                                                     |
-| MAVEN_CLEAR_REPO         |                      |                                                     |
+| Env Variable             | Example                                      | Description                                         |
+|--------------------------|----------------------------------------------|-----------------------------------------------------|
+| HTTPS_PROXY              |                                              | https proxy host                                    |
+| HTTP_PROXY_HOST          |                                              | http proxy host                                     |
+| HTTP_PROXY_PORT          |                                              | http proxy port                                     |
+| HTTP_PROXY_PASSWORD      |                                              | http proxy password                                 |
+| HTTP_PROXY_USERNAME      |                                              | http proxy username                                 |
+| HTTP_PROXY_NONPROXYHOSTS |                                              | http non proxy hosts                                |
+| MAVEN_MIRROR_URL         | http://nexus:8081/repository/maven-public    | Default see - settings.xml. Set nexus repo mirror   |
+| MAVEN_BUILD_OPTS         | "-Dquarkus.package.type=fast-jar -DskipTests"| Default build option is a Quarkus native image      |
+| MAVEN_CLEAR_REPO         | "true"                                       | Deletes the .m2 repo after the build                |
 ```
