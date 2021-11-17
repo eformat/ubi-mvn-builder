@@ -157,3 +157,36 @@ echo $(oc describe bc ${APP_NAME} | grep -E 'webhook.*github' | awk '{print $2}'
 | MAVEN_BUILD_OPTS         | "-Dquarkus.package.type=fast-jar -DskipTests"| Default build option is a Quarkus native image      |
 | MAVEN_CLEAR_REPO         | "true"                                       | Deletes the .m2 repo after the build                |
 ```
+
+### 🤠 For the impatient 🤠
+
+Skip the base building, get straight to the action. Copy-n-paste this altogether into your shell. Go get a cup of coffee.
+
+```bash
+oc new-project demo
+oc new-build --name=jvm-build \
+  quay.io/eformat/ubi-mvn-builder:latest~https://github.com/eformat/code-with-quarkus \
+  -e MAVEN_BUILD_OPTS="-Dquarkus.package.type=fast-jar -DskipTests" \
+  -e MAVEN_CLEAR_REPO="true"
+oc new-build --name=native-build \
+  quay.io/eformat/ubi-mvn-builder:latest~https://github.com/eformat/code-with-quarkus \
+  -e MAVEN_CLEAR_REPO="true"
+oc new-build --name=jvm \
+  --build-arg BUILD_IMAGE=image-registry.openshift-image-registry.svc:5000/$(oc project -q)/jvm-build:latest \
+  --strategy docker --dockerfile - < ./application/Dockerfile.jvm
+oc new-build --name=native \
+  --build-arg BUILD_IMAGE=image-registry.openshift-image-registry.svc:5000/$(oc project -q)/native-build:latest \
+  --strategy docker --dockerfile - < ./application/Dockerfile.native
+oc set triggers bc/jvm --from-image=$(oc project -q)/jvm-build:latest
+oc set triggers bc/native --from-image=$(oc project -q)/native-build:latest
+oc new-app jvm --allow-missing-images=true
+oc expose deployment/jvm --generator=service/v2 --port=8080 --port=8443
+oc expose svc/jvm --port=8080
+oc patch route/jvm \
+  --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
+oc new-app native --allow-missing-images=true
+oc expose deployment/native --generator=service/v2 --port=8080 --port=8443
+oc expose svc/native --port=8080
+oc patch route/native \
+   --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
+```
