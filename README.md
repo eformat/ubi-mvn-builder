@@ -101,6 +101,12 @@ Build JVM and Native Quarkus based application images from UBI using multi-stage
 
 ### Triggers and Web Hooks
 
+Set triggers for the application builds based on the intermediary build images:
+```bash
+oc set triggers bc/jvm --from-image=$(oc project -q)/jvm-build:latest
+oc set triggers bc/native --from-image=$(oc project -q)/native-build:latest
+```
+
 Tag a new builder image manually:
 ```bash
 oc tag --source=docker quay.io/eformat/ubi-mvn-builder:latest $(oc project -q)/ubi-mvn-builder:latest --reference-policy=local --insecure=true
