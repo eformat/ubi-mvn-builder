@@ -1,0 +1,10 @@
+FROM quay.io/eformat/ubi-mvn-runtime-native:latest
+
+ENV DEPLOY=/deployment
+ARG BUILD_IMAGE=myorg/myapp:latest
+
+# copy artifacts
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /home/developer/application ${DEPLOY}/application
+RUN chmod 550 ${DEPLOY}/application
+
+EXPOSE 8080 8443

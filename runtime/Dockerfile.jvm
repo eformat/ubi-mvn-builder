@@ -1,11 +1,21 @@
-FROM quay.io/eformat/ubi-mvn-builder-middle-jvm:latest
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 
+USER root
 ENV DEPLOY=/deployment
 
-# copy artifacts
-COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/lib/ ${DEPLOY}/lib/
-COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/*.jar ${DEPLOY}/
-COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/app/ ${DEPLOY}/app/
-COPY --chown=1001:0 --from=image-registry.openshift-image-registry.svc:5000/cats/cats-build:latest /home/developer/quarkus ${DEPLOY}/quarkus/
+RUN mkdir -p ${DEPLOY} && microdnf -y install java-17-openjdk-headless shadow-utils && \
+    curl https://repo1.maven.org/maven2/io/fabric8/run-java-sh/1.3.8/run-java-sh-1.3.8-sh.sh -o ${DEPLOY}/run-java.sh && \
+    microdnf -y clean all && rm -rf /var/cache/yum
 
-EXPOSE 8080 8443
+# create user
+RUN useradd -u 1001 -G root -d ${DEPLOY} --shell /bin/bash developer && \
+    chown -R 1001:0 ${DEPLOY} && chmod 770 ${DEPLOY} && chmod 550 ${DEPLOY}/run-java.sh
+
+# copy s2i
+COPY s2i /usr/libexec/s2i
+LABEL io.openshift.s2i.scripts-url="image:///usr/libexec/s2i/"
+
+WORKDIR ${DEPLOY}
+USER 1001
+
+CMD ["/usr/libexec/s2i/run"]

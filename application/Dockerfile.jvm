@@ -1,0 +1,12 @@
+FROM quay.io/eformat/ubi-mvn-runtime-jvm:latest
+
+ENV DEPLOY=/deployment
+ARG BUILD_IMAGE=myorg/myapp:latest
+
+# copy artifacts
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /home/developer/lib/ ${DEPLOY}/lib/
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /home/developer/*.jar ${DEPLOY}/
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /home/developer/app/ ${DEPLOY}/app/
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /home/developer/quarkus ${DEPLOY}/quarkus/
+
+EXPOSE 8080 8443
