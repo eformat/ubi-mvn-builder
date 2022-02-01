@@ -1,7 +1,7 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 
 USER root
-ENV DEPLOY=/deployment
+ENV DEPLOY=/deployments
 
 RUN mkdir -p ${DEPLOY} && microdnf -y install libstdc++.x86_64 zlib shadow-utils && \
     microdnf -y clean all && rm -rf /var/cache/yum
