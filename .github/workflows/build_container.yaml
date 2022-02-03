@@ -65,7 +65,7 @@ jobs:
       #   password: ${{ secrets.GITHUB_TOKEN }}   # ghcr.io
 
       - name: Push Base to Container Repository
-        id: push-to-registry
+        id: push-to-registry-base
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ env.BASE_IMAGE_NAME }}
@@ -73,7 +73,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
 
       - name: Push JVM to Container Repository
-        id: push-to-registry
+        id: push-to-registry-jvm
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ env.JVM_IMAGE_NAME }}
@@ -81,7 +81,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
 
       - name: Push Native to Container Repository
-        id: push-to-registry
+        id: push-to-registry-native
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ env.NATIVE_IMAGE_NAME }}
