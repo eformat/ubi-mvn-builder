@@ -49,7 +49,7 @@ jobs:
             ./runtime/Dockerfile.jvm
 
       # Build Native image
-      - name: Buildah JVM Image
+      - name: Buildah Native Image
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.NATIVE_IMAGE_NAME }}

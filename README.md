@@ -1,3 +1,5 @@
+[![Build containers](https://github.com/eformat/ubi-mvn-builder/actions/workflows/build_container.yaml/badge.svg?branch=main)](https://github.com/eformat/ubi-mvn-builder/actions/workflows/build_container.yaml)
+
 ## ubi-mvn-builder
 
 Build JVM and Native Quarkus based application images from UBI using multi-stage docker files and latest Java toolchain.
