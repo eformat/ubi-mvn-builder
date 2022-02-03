@@ -26,7 +26,7 @@ RUN rm -rf /tmp/* && \
     chown -R 1001:0 ${HOME} && chmod 770 ${HOME} && chmod 770 ${HOME}/.m2
 
 # copy s2i
-COPY builder/s2i /usr/libexec/s2i
+COPY s2i /usr/libexec/s2i
 LABEL io.openshift.s2i.scripts-url="image:///usr/libexec/s2i/"
 
 # copy maven setup
