@@ -34,8 +34,9 @@ jobs:
         with:
           image: ${{ env.BASE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
+          context: builder
           containerfiles: |
-            ./builder/Dockerfile
+            ./Dockerfile
 
       # Build JVM image
       - name: Buildah JVM Image
@@ -43,8 +44,9 @@ jobs:
         with:
           image: ${{ env.JVM_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
+          context: runtime
           containerfiles: |
-            ./runtime/Dockerfile.jvm
+            ./Dockerfile.jvm
 
       # Build Native image
       - name: Buildah JVM Image
@@ -52,8 +54,9 @@ jobs:
         with:
           image: ${{ env.NATIVE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
+          context: runtime
           containerfiles: |
-            ./runtime/Dockerfile.native
+            ./Dockerfile.native
 
       # Login to Registry
       - name: Log in to the Container registry
