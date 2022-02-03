@@ -1,0 +1,89 @@
+name: Build containers
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+  workflow_dispatch:
+
+env:
+  REGISTRY: quay.io
+  BASE_IMAGE_NAME: eformat/ubi-mvn-builder
+  JVM_IMAGE_NAME: eformat/ubi-mvn-runtime-jvm
+  NATIVE_IMAGE_NAME: eformat/ubi-mvn-runtime-native
+  TAGS: latest
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Build base image
+      - name: Buildah Base Image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.BASE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          containerfiles: |
+            ./builder/Dockerfile
+
+      # Build JVM image
+      - name: Buildah JVM Image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.JVM_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          containerfiles: |
+            ./runtime/Dockerfile.jvm
+
+      # Build Native image
+      - name: Buildah JVM Image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.NATIVE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          containerfiles: |
+            ./runtime/Dockerfile.native
+
+      # Login to Registry
+      - name: Log in to the Container registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.QUAY_USER }}      # ${{ github.actor }} - for ghcr.io
+          password: ${{ secrets.QUAY_TOKEN }}     # quay.io
+      #   password: ${{ secrets.GITHUB_TOKEN }}   # ghcr.io
+
+      - name: Push Base to Container Repository
+        id: push-to-registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.BASE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          registry: ${{ env.REGISTRY }}
+
+      - name: Push JVM to Container Repository
+        id: push-to-registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.JVM_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          registry: ${{ env.REGISTRY }}
+
+      - name: Push Native to Container Repository
+        id: push-to-registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.NATIVE_IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          registry: ${{ env.REGISTRY }}
