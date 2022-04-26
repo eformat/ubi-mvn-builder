@@ -1,6 +1,6 @@
 FROM quay.io/eformat/ubi-mvn-runtime-jvm:latest
 
-ENV DEPLOY=/deployment
+ENV DEPLOY=/deployments
 ARG BUILD_IMAGE=myorg/myapp:latest
 
 # copy artifacts
