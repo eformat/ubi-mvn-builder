@@ -8,7 +8,7 @@ Build JVM and Native Quarkus based application images from UBI using multi-stage
 
 > 👷👷👷 Build Toolchain:
 >   - Quarkus (native and fast-jar)
->   - OpenJDK 17, maven 3.8.5, Mandrel
+>   - OpenJDK 17, maven 3.8, Mandrel 22
 >   - UBI 8.5 Minimal
 >
 > ⚡⚡⚡ Runtime:

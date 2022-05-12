@@ -3,7 +3,7 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 USER root
 
 ENV MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz \
-    GRAAL_CE_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-22.0.0.2-Final/mandrel-java17-linux-amd64-22.0.0.2-Final.tar.gz \
+    GRAAL_CE_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-22.1.0.0-Final/mandrel-java17-linux-amd64-22.1.0.0-Final.tar.gz \
     GRAALVM_HOME=/opt/mandrelJDK \
     HOME=/home/developer \
     APP_HOME=/home/developer \
