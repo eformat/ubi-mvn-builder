@@ -160,6 +160,20 @@ echo $(oc describe bc ${APP_NAME} | grep -E 'webhook.*github' | awk '{print $2}'
 | MAVEN_CLEAR_REPO         | "true"                                       | Deletes the .m2 repo after the build                |
 ```
 
+If you experience OOM issues with the native build, you can set the max heap size in _MVN_ADDITIONAL_ARGS_ on the BuildConfig:
+
+```bash
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'ubi-mvn-builder:latest'
+      env:
+        - name: MVN_ADDITIONAL_ARGS
+          value: '-Dquarkus.native.additional-build-args=-J-Xmx2G'
+```
+
 ### 🤠 For the impatient 🤠
 
 Skip the base building, get straight to the action. Copy-n-paste this altogether into your shell. Go get a cup of coffee.
