@@ -1,15 +1,15 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.0.0
 
 USER root
 
-ENV MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz \
+ENV MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz \
     GRAAL_CE_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-22.1.0.0-Final/mandrel-java17-linux-amd64-22.1.0.0-Final.tar.gz \
     GRAALVM_HOME=/opt/mandrelJDK \
     HOME=/home/developer \
     APP_HOME=/home/developer \
     MAVEN_CONFIG=/home/developer/.m2
 
-RUN microdnf -y install bash tar gzip unzip which findutils wget curl git bzip2 java-17-openjdk-devel gcc gcc-c++ libstdc++ libstdc++-devel glibc-static glibc-devel zlib-devel && \
+RUN microdnf -y install bash tar gzip unzip which findutils wget git bzip2 java-17-openjdk-devel gcc gcc-c++ libstdc++ libstdc++-devel glibc-static glibc-devel zlib-devel && \
     mkdir -p ${HOME} /usr/share/maven && \
     curl -fsSL ${MAVEN_URL} | tar -xzC /usr/share/maven --strip-components=1 && \
     mkdir -p ${GRAALVM_HOME} && \
