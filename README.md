@@ -206,3 +206,31 @@ oc expose svc/native --port=8080
 oc patch route/native \
    --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
 ```
+
+### Signature
+
+The public key of:
+
+[ubi-mvn-builder image](https://quay.io/repository/eformat/ubi-mvn-builder)
+[ubi-mvn-runtime-jvm image](https://quay.io/repository/eformat/ubi-mvn-runtime-jvm)
+[ubi-mvn-runtime-native image](https://quay.io/repository/eformat/ubi-mvn-runtime-native)
+
+[Cosign](https://github.com/sigstore/cosign) public key:
+
+```shell
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEg4xKetcKYj29QN4uAX8pkYwVjtmO
+Ehs/+Sk+GaBSi7lKtOA/Hfw+8tnlnq7YPjpX0/J05dtTRVZd0iFuMu3zqQ==
+-----END PUBLIC KEY-----
+```
+
+The public key is also available online: <https://raw.githubusercontent.com/eformat/ubi-mvn-builder/master/cosign.pub>
+
+To verify an image:
+
+```shell
+curl --progress-bar -o cosign.pub https://raw.githubusercontent.com/eformat/ubi-mvn-builder/master/cosign.pub
+cosign verify --key cosign.pub quay.io/eformat/ubi-mvn-builder:latest
+cosign verify --key cosign.pub quay.io/eformat/ubi-mvn-runtime-jvm:latest
+cosign verify --key cosign.pub quay.io/eformat/ubi-mvn-runtime-native:latest
+```
