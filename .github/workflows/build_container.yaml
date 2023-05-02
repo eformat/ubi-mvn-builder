@@ -24,7 +24,7 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -90,3 +90,45 @@ jobs:
           image: ${{ env.NATIVE_IMAGE_NAME }}
           tags: ${{ env.TAGS }}
           registry: ${{ env.REGISTRY }}
+
+      # Provenance signing image
+      - name: Install cosign
+        uses: sigstore/cosign-installer@c3667d99424e7e6047999fb6246c0da843953c65 # v3.0.1
+        with:
+          cosign-release: 'v2.0.0'
+
+      - name: Write signing key to disk (only needed for `cosign sign --key`)
+        run: echo "${{ secrets.SIGNING_SECRET }}" > cosign.key
+
+      - name: Sign container Base image
+        run: |
+          cosign sign --key cosign.key \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
+
+      - name: Sign container JVM image
+        run: |
+          cosign sign --key cosign.key \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.JVM_IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
+
+      - name: Sign container Native image
+        run: |
+          cosign sign --key cosign.key \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.NATIVE_IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
