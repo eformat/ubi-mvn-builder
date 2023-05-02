@@ -211,9 +211,9 @@ oc patch route/native \
 
 The public key of:
 
-[ubi-mvn-builder image](https://quay.io/repository/eformat/ubi-mvn-builder)
-[ubi-mvn-runtime-jvm image](https://quay.io/repository/eformat/ubi-mvn-runtime-jvm)
-[ubi-mvn-runtime-native image](https://quay.io/repository/eformat/ubi-mvn-runtime-native)
+- [ubi-mvn-builder image](https://quay.io/repository/eformat/ubi-mvn-builder)
+- [ubi-mvn-runtime-jvm image](https://quay.io/repository/eformat/ubi-mvn-runtime-jvm)
+- [ubi-mvn-runtime-native image](https://quay.io/repository/eformat/ubi-mvn-runtime-native)
 
 [Cosign](https://github.com/sigstore/cosign) public key:
 
