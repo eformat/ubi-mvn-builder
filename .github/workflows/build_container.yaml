@@ -10,6 +10,8 @@ on:
     paths-ignore:
       - 'README.md'
   workflow_dispatch:
+  schedule:
+    - cron: '5 4 * * 0'
 
 env:
   REGISTRY: quay.io
