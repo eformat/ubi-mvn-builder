@@ -2,8 +2,8 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:9.3
 
 USER root
 
-ENV MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz \
-    GRAAL_CE_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-23.1.0.0-Final/mandrel-java21-linux-amd64-23.1.0.0-Final.tar.gz \
+ENV MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz \
+    GRAAL_CE_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-23.1.1.0-Final/mandrel-java21-linux-amd64-23.1.1.0-Final.tar.gz \
     GRAALVM_HOME=/opt/mandrelJDK \
     HOME=/home/developer \
     APP_HOME=/home/developer \
