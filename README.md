@@ -19,11 +19,11 @@ Build JVM and Native Quarkus based application images from UBI using multi-stage
 >   - Latest Java toolchain
 >   - A [Secure Supply Chain](https://www.redhat.com/en/blog/architecting-containers-part-5-building-secure-and-manageable-container-software-supply-chain)
 >   - Smaller image sizes, less attack surface:
->       - Builder image size            = 557 MiB
->       - JVM runtime image size        = 131 MiB
->       - JVM application image size    = 143 MiB
->       - Native runtime image size     = 47 MiB
->       - Native application image size = 75 MiB
+>       - Builder image size            = 609 MiB
+>       - JVM runtime image size        = 126 MiB
+>       - JVM application image size    = 138 MiB
+>       - Native runtime image size     = 39 MiB
+>       - Native application image size = 67 MiB
 
 1. Create the base s2i core build image and push to remote repo for reuse across clusters.
 
